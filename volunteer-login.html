@@ -273,8 +273,8 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             console.log('Login attempt:', { email, password });
-            // Here you would typically send this data to your server for authentication
-            alert('Login functionality would be implemented here.');
+            // Authentication withe server needs to be built here. Exploring possibility with open id. Google logins.
+            alert('Coming Soon...');
         });
 
         // Function to validate email
@@ -305,7 +305,7 @@
                 // Second click: process the full registration
                 const formData = new FormData(registerForm);
                 console.log('Registration data:', Object.fromEntries(formData));
-                // Here you would typically send this data to your server to create a new account
+                // Additional functionality to store registration information needs to be built. Perhaps a database backend.
                 const name = document.getElementById('regName').value;
                 successMessage.innerHTML = `${name}, thank you for registering! Your submission has been received. You will be informed via email once it's approved.`;
                 registerForm.reset();
