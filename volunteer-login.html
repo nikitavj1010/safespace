@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Safe Space - Volunteer Login</title>
     <style>
-        /* CSS styles for the entire application */
+        /* Global styles */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+        /* Body styles */
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #80deea);
@@ -63,18 +64,27 @@
             flex-direction: column;
         }
 
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
         label {
-            margin-top: 0.75rem;
+            display: block;
+            margin-bottom: 0.25rem;
             color: #006064;
             font-size: 0.9rem;
         }
 
-        input {
+        input, select {
+            width: 100%;
             padding: 0.5rem;
-            margin-top: 0.25rem;
             border: 1px solid #b2ebf2;
             border-radius: 4px;
             font-size: 1rem;
+        }
+
+        select {
+            background-color: white;
         }
 
         button {
@@ -109,6 +119,28 @@
             text-decoration: underline;
         }
 
+        /* Utility classes */
+        .hidden {
+            display: none;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        .error-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
         /* Responsive design for larger screens */
         @media (min-width: 768px) {
             .logo img {
@@ -132,22 +164,72 @@
         </div>
         <!-- Login form -->
         <form id="loginForm">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
+            <div class="form-group">
+                <label for="loginEmail">Email:</label>
+                <input type="email" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" required>
+            </div>
             <button type="submit">Login</button>
         </form>
         <!-- Registration form (initially hidden) -->
-        <form id="registerForm" style="display: none;">
-            <label for="name">Name:</label>
-            <input type="text" id="name" required>
-            <label for="regEmail">Email:</label>
-            <input type="email" id="regEmail" required>
-            <label for="regPassword">Password:</label>
-            <input type="password" id="regPassword" required>
-            <button type="submit">Register</button>
+        <form id="registerForm" class="hidden">
+            <div class="form-group">
+                <label for="regName">Name:</label>
+                <input type="text" id="regName" required>
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email:</label>
+                <input type="email" id="regEmail" required>
+                <div id="emailError" class="error-message hidden">Please enter a valid email address.</div>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password:</label>
+                <input type="password" id="regPassword" required>
+            </div>
+            <!-- Additional fields for volunteer information (initially hidden) -->
+            <div id="additionalFields" class="hidden">
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Contact Phone Number (optional):</label>
+                    <input type="tel" id="phone">
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="idType">Type of ID:</label>
+                    <select id="idType" required>
+                        <option value="">Select ID Type</option>
+                        <option value="drivers_license">Driver's License</option>
+                        <option value="student_id">Student ID</option>
+                        <option value="passport">Passport</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group hidden" id="otherIdGroup">
+                    <label for="otherIdType">Specify ID Type:</label>
+                    <input type="text" id="otherIdType">
+                </div>
+                <div class="form-group">
+                    <label for="idNumber">Identification Number:</label>
+                    <input type="text" id="idNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="idPicture">Upload Picture of ID:</label>
+                    <input type="file" id="idPicture" accept="image/*" required>
+                </div>
+            </div>
+            <button type="submit" id="registerButton">Register</button>
         </form>
+        <!-- Success message (initially hidden) -->
+        <div id="successMessage" class="success-message hidden"></div>
         <!-- Toggle between login and registration -->
         <div class="toggle-form">
             <a href="#" id="toggleForm">New volunteer? Register here</a>
@@ -159,18 +241,24 @@
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         const toggleFormLink = document.getElementById('toggleForm');
+        const additionalFields = document.getElementById('additionalFields');
+        const registerButton = document.getElementById('registerButton');
+        const successMessage = document.getElementById('successMessage');
 
         // Function to toggle between login and registration forms
         function toggleForm() {
-            if (loginForm.style.display === 'none') {
-                loginForm.style.display = 'flex';
-                registerForm.style.display = 'none';
+            loginForm.classList.toggle('hidden');
+            registerForm.classList.toggle('hidden');
+            if (registerForm.classList.contains('hidden')) {
                 toggleFormLink.textContent = 'New volunteer? Register here';
             } else {
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'flex';
                 toggleFormLink.textContent = 'Already registered? Login here';
             }
+            // Reset registration form and hide additional fields
+            registerForm.reset();
+            additionalFields.classList.add('hidden');
+            registerButton.textContent = 'Register';
+            successMessage.classList.add('hidden');
         }
 
         // Add click event listener to the toggle link
@@ -182,22 +270,62 @@
         // Function to handle login form submission
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             console.log('Login attempt:', { email, password });
             // Here you would typically send this data to your server for authentication
             alert('Login functionality would be implemented here.');
         });
 
-        // Function to handle registration form submission
-        registerForm.addEventListener('submit', function(e) {
+        // Function to validate email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Function to handle register button click
+        registerButton.addEventListener('click', function(e) {
             e.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            console.log('Registration attempt:', { name, email, password });
-            // Here you would typically send this data to your server to create a new account
-            alert('Registration functionality would be implemented here.');
+            const emailInput = document.getElementById('regEmail');
+            const emailError = document.getElementById('emailError');
+
+            // Validate email
+            if (!validateEmail(emailInput.value)) {
+                emailError.classList.remove('hidden');
+                return;
+            } else {
+                emailError.classList.add('hidden');
+            }
+
+            if (additionalFields.classList.contains('hidden')) {
+                // First click: show additional fields
+                additionalFields.classList.remove('hidden');
+                registerButton.textContent = 'Submit Registration';
+            } else {
+                // Second click: process the full registration
+                const formData = new FormData(registerForm);
+                console.log('Registration data:', Object.fromEntries(formData));
+                // Here you would typically send this data to your server to create a new account
+                const name = document.getElementById('regName').value;
+                successMessage.innerHTML = `${name}, thank you for registering! Your submission has been received. You will be informed via email once it's approved.`;
+                registerForm.reset();
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                successMessage.classList.remove('hidden');
+                additionalFields.classList.add('hidden');
+                registerButton.textContent = 'Register';
+                toggleFormLink.textContent = 'New volunteer? Register here';
+            }
+        });
+
+        // Function to handle ID type selection
+        document.getElementById('idType').addEventListener('change', function() {
+            const otherIdGroup = document.getElementById('otherIdGroup');
+            if (this.value === 'other') {
+                otherIdGroup.classList.remove('hidden');
+            } else {
+                otherIdGroup.classList.add('hidden');
+            }
         });
     </script>
 </body>
