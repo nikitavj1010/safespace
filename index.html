@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Space App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <style>
+        /* CSS styles for the entire application */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #80deea);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Logo styles */
+        .logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: #006064;
+        }
+
+        /* Volunteer login button styles */
+        .volunteer-login {
+            background-color: #00838f;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Main content container styles */
+        .container {
+            flex-grow: 1;
+            padding: 1rem;
+        }
+
+        h2 {
+            color: #006064;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        /* Mood button styles */
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 1rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: white;
+            background-color: #00838f;
+        }
+
+        button:hover {
+            background-color: #006064;
+        }
+
+        /* Response and additional options styles */
+        #response {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            color: #006064;
+        }
+
+        #additionalOptions {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        #additionalOptions button {
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        /* Chat container styles */
+        .chat-container {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .chat-messages {
+            height: 300px;
+            border: 1px solid #b2ebf2;
+            padding: 1rem;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            background-color: white;
+        }
+
+        .chat-input {
+            display: flex;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 0.5rem;
+            border: 1px solid #b2ebf2;
+        }
+
+        .chat-input button {
+            padding: 0.5rem 1rem;
+            background-color: #00838f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        /* Message styles */
+        .ai-message {
+            background-color: #e0f7fa;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            background-color: #b2ebf2;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+
+        /* Responsive design for larger screens */
+        @media (min-width: 768px) {
+            .buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .logo img {
+                width: 50px;
+                height: 50px;
+            }
+            .logo h1 {
+                font-size: 2rem;
+            }
+            #additionalOptions button {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header section with logo and volunteer login button -->
+    <div class="header">
+        <div class="logo">
+            <a href="index.html">
+                <img src="safspac.jpg" alt="Safe Space Icon" />
+                <h1>Safe Space</h1>
+            </a>
+        </div>
+        <button class="volunteer-login" onclick="showVolunteerLogin()">
+            <i class="fas fa-user"></i> Volunteer Login
+        </button>
+    </div>
+    
+    <!-- Main content container -->
+    <div class="container">
+        <h2>How are you feeling?</h2>
+        <!-- Mood selection buttons -->
+        <div class="buttons">
+            <button onclick="checkMood('great')">Great 😊</button>
+            <button onclick="checkMood('ok')">OK 😐</button>
+            <button onclick="checkMood('bad')">Bad 😔</button>
+            <button onclick="checkMood('needHelp')">I need help 😢</button>
+        </div>
+        <!-- Response and additional options display area -->
+        <div id="response"></div>
+        <div id="additionalOptions"></div>
+        <!-- Chat container for AI assistant interaction -->
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type your message...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle mood selection and display appropriate response
+        function checkMood(mood) {
+            const responseElement = document.getElementById('response');
+            const additionalOptionsElement = document.getElementById('additionalOptions');
+            let response = '';
+            additionalOptionsElement.innerHTML = '';
+
+            switch (mood) {
+                case 'great':
+                    response = "That's awesome! Keep doing what you're doing!";
+                    break;
+                case 'ok':
+                    response = "Glad to hear you're doing okay. Remember, it's alright to have average days too!";
+                    break;
+                case 'bad':
+                    response = "I'm sorry you're not feeling great. Remember, it's okay to have bad days. Would you like to talk to someone?";
+                    showAdditionalOptions();
+                    break;
+                case 'needHelp':
+                    response = "I'm here for you. It's brave of you to ask for help. Would you like to share what's troubling you?";
+                    showAdditionalOptions();
+                    break;
+            }
+
+            responseElement.textContent = response;
+        }
+
+        // Function to display additional support options
+        function showAdditionalOptions() {
+            const additionalOptionsElement = document.getElementById('additionalOptions');
+            additionalOptionsElement.innerHTML = `
+                <button onclick="connectWith('counselor')">Connect with a Counselor</button>
+                <button onclick="connectWith('peer')">Talk to a Peer Support Volunteer</button>
+                <button onclick="viewSelfHelpResources()">View Self-Help Resources</button>
+            `;
+        }
+
+        // Function to initiate connection with a counselor or peer support volunteer
+        function connectWith(option) {
+            const chatContainer = document.getElementById('chatContainer');
+            const chatMessages = document.getElementById('chatMessages');
+            chatContainer.style.display = 'block';
+            chatMessages.innerHTML = '';
+            
+            addMessage("System", `Connecting you with a ${option}. While we're finding someone for you, our AI assistant is here to help.`);
+            
+            setTimeout(() => {
+                addMessage("AI Assistant", "Hello! I'm an AI assistant here to support you while we connect you with a human volunteer. How can I help you today?");
+            }, 1000);
+        }
+
+        // Function to add a message to the chat container
+        function addMessage(sender, message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.className = sender === "You" ? "user-message" : "ai-message";
+            messageElement.textContent = `${sender}: ${message}`;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Function to handle sending a message in the chat
+        function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage("You", message);
+                chatInput.value = '';
+                simulateAIResponse(message);
+            }
+        }
+
+        // Function to simulate AI response based on user input
+        function simulateAIResponse(userMessage) {
+            setTimeout(() => {
+                let response;
+                if (userMessage.toLowerCase().includes("sad") || userMessage.toLowerCase().includes("depressed")) {
+                    response = "I'm sorry to hear that you're feeling sad. Remember that it's okay to feel this way sometimes. Would you like to talk more about what's causing these feelings?";
+                } else if (userMessage.toLowerCase().includes("angry") || userMessage.toLowerCase().includes("frustrated")) {
+                    response = "It sounds like you're dealing with some frustration. Taking deep breaths can sometimes help in moments like these. Would you like to try a quick breathing exercise together?";
+                } else if (userMessage.toLowerCase().includes("anxious") || userMessage.toLowerCase().includes("worried")) {
+                    response = "Anxiety can be really challenging to deal with. Remember that you're not alone in this. Can you tell me more about what's making you feel anxious?";
+                } else {
+                    response = "Thank you for sharing. A human volunteer will be with you shortly to provide more personalized support. In the meantime, is there anything specific you'd like to talk about?";
+                }
+                addMessage("AI Assistant", response);
+            }, 1000);
+        }
+
+        // Function to display self-help resources
+        function viewSelfHelpResources() {
+            const responseElement = document.getElementById('response');
+            responseElement.innerHTML = `
+                <h3>Self-Help Resources</h3>
+                <ul>
+                    <li><a href="https://suicidepreventionlifeline.org/" target="_blank">National Suicide Prevention Lifeline</a></li>
+                    <li><a href="https://www.crisistextline.org/" target="_blank">Crisis Text Line</a></li>
+                    <li><a href="https://www.nami.org/" target="_blank">National Alliance on Mental Illness</a></li>
+                    <li><a href="https://www.mentalhealth.gov/" target="_blank">MentalHealth.gov</a></li>
+                </ul>
+                <p>Remember, these are general resources. In a real app, you would include local community resources as well.</p>
+            `;
+        }
+
+        // Function to navigate to the volunteer login page
+        function showVolunteerLogin() {
+            window.location.href = 'volunteer-login.html';
+        }
+    </script>
+</body>
+</html>

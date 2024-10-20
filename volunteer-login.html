@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Space - Volunteer Login</title>
+    <style>
+        /* CSS styles for the entire application */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #80deea);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* Main container styles */
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Logo styles */
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: #006064;
+        }
+
+        /* Form styles */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 0.75rem;
+            color: #006064;
+            font-size: 0.9rem;
+        }
+
+        input {
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+            border: 1px solid #b2ebf2;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: #00838f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background-color: #006064;
+        }
+
+        /* Toggle form link styles */
+        .toggle-form {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .toggle-form a {
+            color: #00838f;
+            text-decoration: none;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive design for larger screens */
+        @media (min-width: 768px) {
+            .logo img {
+                width: 50px;
+                height: 50px;
+            }
+            .logo h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo and app name -->
+        <div class="logo">
+            <a href="index.html">
+                <img src="safspac.jpg" alt="Safe Space Icon" />
+                <h1>Safe Space</h1>
+            </a>
+        </div>
+        <!-- Login form -->
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            <button type="submit">Login</button>
+        </form>
+        <!-- Registration form (initially hidden) -->
+        <form id="registerForm" style="display: none;">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+            <label for="regEmail">Email:</label>
+            <input type="email" id="regEmail" required>
+            <label for="regPassword">Password:</label>
+            <input type="password" id="regPassword" required>
+            <button type="submit">Register</button>
+        </form>
+        <!-- Toggle between login and registration -->
+        <div class="toggle-form">
+            <a href="#" id="toggleForm">New volunteer? Register here</a>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const toggleFormLink = document.getElementById('toggleForm');
+
+        // Function to toggle between login and registration forms
+        function toggleForm() {
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'flex';
+                registerForm.style.display = 'none';
+                toggleFormLink.textContent = 'New volunteer? Register here';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'flex';
+                toggleFormLink.textContent = 'Already registered? Login here';
+            }
+        }
+
+        // Add click event listener to the toggle link
+        toggleFormLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleForm();
+        });
+
+        // Function to handle login form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            console.log('Login attempt:', { email, password });
+            // Here you would typically send this data to your server for authentication
+            alert('Login functionality would be implemented here.');
+        });
+
+        // Function to handle registration form submission
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            console.log('Registration attempt:', { name, email, password });
+            // Here you would typically send this data to your server to create a new account
+            alert('Registration functionality would be implemented here.');
+        });
+    </script>
+</body>
+</html>
