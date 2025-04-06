@@ -6,7 +6,7 @@
     <title>Safe Space App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
     <style>
-         /* CSS styles for the entire application */
+        /* CSS styles for the entire application */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -185,7 +185,7 @@
     </style>
 </head>
 <body>
-  <!-- Header section with logo and volunteer login button -->
+    <!-- Header section with logo and volunteer login button -->
     <div class="header">
         <div class="logo">
             <a href="index.html">
@@ -220,27 +220,9 @@
             </div>
         </div>
     </div>
+
     <script>
-        async function simulateAIResponse(userMessage) {
-            try {
-                const response = await fetch('http://localhost:5000/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ message: userMessage })
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch AI response');
-                }
-                const data = await response.json();
-                addMessage("AI Assistant", data.reply);
-            } catch (error) {
-                console.error('Error:', error);
-                addMessage("AI Assistant", "Sorry, unable to connect right now.");
-            }
-        }
-       // Function to handle mood selection and display appropriate response
+        // Function to handle mood selection and display appropriate response
         function checkMood(mood) {
             const responseElement = document.getElementById('response');
             const additionalOptionsElement = document.getElementById('additionalOptions');
@@ -275,8 +257,9 @@
                 <button onclick="connectWith('peer')">Talk to a Peer Support Volunteer</button>
                 <button onclick="viewSelfHelpResources()">View Self-Help Resources</button>
             `;
-        }														   
-	  // Function to initiate connection with a counselor or peer support volunteer
+        }
+
+        // Function to initiate connection with a counselor or peer support volunteer
         function connectWith(option) {
             const chatContainer = document.getElementById('chatContainer');
             const chatMessages = document.getElementById('chatMessages');
@@ -288,11 +271,22 @@
             setTimeout(() => {
                 addMessage("AI Assistant", "Hello! I'm an AI assistant here to support you while we connect you with a human volunteer. How can I help you today?");
             }, 1000);
-        }		
-		
+        }
+
+        // Function to add a message to the chat container
+        function addMessage(sender, message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.className = sender === "You" ? "user-message" : "ai-message";
+            messageElement.textContent = `${sender}: ${message}`;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Function to handle sending a message in the chat
         function sendMessage() {
             const chatInput = document.getElementById('chatInput');
-            const message = chatInput.value;
+            const message = chatInput.value.trim();
             if (message) {
                 addMessage("You", message);
                 chatInput.value = '';
@@ -300,15 +294,25 @@
             }
         }
 
-// Add event listener for Enter key in chat input
-		document.getElementById('chatInput').addEventListener('keypress', function(e) {
-			if (e.key === 'Enter') {
-				e.preventDefault();
-				sendMessage();
-			}
-		});
+        // Function to simulate AI response based on user input
+        function simulateAIResponse(userMessage) {
+            setTimeout(() => {
+                let response;
+                if (userMessage.toLowerCase().includes("sad") || userMessage.toLowerCase().includes("depressed")) {
+                    response = "I'm sorry to hear that you're feeling sad. Remember that it's okay to feel this way sometimes. Would you like to talk more about what's causing these feelings?";
+                } else if (userMessage.toLowerCase().includes("angry") || userMessage.toLowerCase().includes("frustrated")) {
+                    response = "It sounds like you're dealing with some frustration. Taking deep breaths can sometimes help in moments like these. Would you like to try a quick breathing exercise together?";
+                } else if (userMessage.toLowerCase().includes("anxious") || userMessage.toLowerCase().includes("worried")) {
+                    response = "Anxiety can be really challenging to deal with. Remember that you're not alone in this. Can you tell me more about what's making you feel anxious?";
+                } else {
+                    response = "Thank you for sharing. A human volunteer will be with you shortly to provide more personalized support. In the meantime, is there anything specific you'd like to talk about?";
+                }
+                addMessage("AI Assistant", response);
+            }, 1000);
+        }
 
- function viewSelfHelpResources() {
+        // Function to display self-help resources
+        function viewSelfHelpResources() {
             const responseElement = document.getElementById('response');
             responseElement.innerHTML = `
                 <h3>Self-Help Resources</h3>
@@ -320,14 +324,9 @@
                 </ul>
               //  Add additional local resources
             `;
-        }		
-        function addMessage(sender, message) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageElement = document.createElement('div');
-            messageElement.textContent = `${sender}: ${message}`;
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+
+        // Function to navigate to the volunteer login page
         function showVolunteerLogin() {
             window.location.href = 'volunteer-login.html';
         }
